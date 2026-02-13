@@ -22,9 +22,13 @@ BASE_DIR = PROJECT_DIR.parent
 
 
 # Application definition
+CUSTOM_INSTALLED_APPS = [
+    "user",
+    "home",
+]
+
 
 INSTALLED_APPS = [
-    "home",
     "search",
     "corsheaders",
     "wagtail.contrib.forms",
@@ -48,7 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-]
+] + CUSTOM_INSTALLED_APPS
+
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -198,3 +203,5 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
+
+AUTH_USER_MODEL = "user.User"

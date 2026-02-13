@@ -15,6 +15,7 @@ class BlogPost(Page):
         related_name="+",
     )
     category = models.CharField(max_length=255, blank=True)
+    excerpt = models.TextField(blank=True)
     content = RichTextField(blank=True)
     content_panels = Page.content_panels + [
         FieldPanel("content", classname="full"),
@@ -27,3 +28,13 @@ class BlogPost(Page):
         word_count = len(self.content.split())
         reading_speed_wpm = AVERAGE_WORDS_PER_MINUTE
         return max(1, word_count // reading_speed_wpm)
+
+    @property
+    def published_at(self):
+        """Return the published date of the blog post."""
+        return self.first_published_at
+
+    @property
+    def author(self):
+        """Return the author of the blog post."""
+        return self.owner

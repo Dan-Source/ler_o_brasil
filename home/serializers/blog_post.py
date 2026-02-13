@@ -1,6 +1,36 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from home.models.blog_post import BlogPost
+from ler_o_brasil import settings
+from user.models import User
+
+
+class BlogAuthorsSerializer(ModelSerializer):
+    """Serializer for BlogPost author."""
+
+    name = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["id", "name"]
+
+    def get_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+
+class ListBlogPostSerializer(ModelSerializer):
+    """Serializer for listing BlogPost instances."""
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            "id",
+            "title",
+            "cover_image",
+            "category",
+            "excerpt",
+            "slug",
+        ]
 
 
 class BlogPostSerializer(ModelSerializer):

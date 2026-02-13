@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -14,12 +15,30 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-8 offset-md-2 text-center">
-            {% if page.image %}
-            <img src="{{ page.image.url }}" alt="{{ page.image.title }}" class="img-fluid mb-4">
+        <div class="col-md-8 offset-md-2">
+            {% if page.cover_image %}
+            <div class="mb-4">
+                {% image page.cover_image fill-1200x600 class="img-fluid rounded" %}
+            </div>
             {% endif %}
             {% if page.title %}
-            <h1 class="mb-3">{{ page.title }}</h1>
+            <h1 class="mb-3 text-center">{{ page.title }}</h1>
+            {% endif %}
+            <div class="d-flex flex-wrap gap-2 justify-content-center text-muted mb-4">
+                {% if page.category %}
+                <span>{{ page.category }}</span>
+                <span>•</span>
+                {% endif %}
+                <span>{{ page.reading_time }} min de leitura</span>
+                {% if page.first_published_at %}
+                <span>•</span>
+                <span>{{ page.first_published_at|date:"d/m/Y" }}</span>
+                {% endif %}
+            </div>
+            {% if page.content %}
+            <div class="blog-content">
+                {{ page.content|richtext }}
+            </div>
             {% endif %}
         </div>
     </div>
