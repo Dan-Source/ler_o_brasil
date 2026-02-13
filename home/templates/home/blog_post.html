@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block extra_css %}
+
+{% endblock extra_css %}
+
+{% block content %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    {% include "home/navbar.html" %}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+            {% if page.image %}
+            <img src="{{ page.image.url }}" alt="{{ page.image.title }}" class="img-fluid mb-4">
+            {% endif %}
+            {% if page.title %}
+            <h1 class="mb-3">{{ page.title }}</h1>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
