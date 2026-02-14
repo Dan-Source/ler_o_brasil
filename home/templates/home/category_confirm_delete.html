@@ -1,0 +1,19 @@
+{% extends "wagtailadmin/base.html" %}
+
+{% block titletag %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="content">
+    {% include "wagtailadmin/shared/header.html" with title=title icon="warning" %}
+    <div class="nice-padding">
+        <p>Tem certeza que deseja excluir a categoria <strong>{{ category.name }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="button-bar">
+                <button type="submit" class="button button-longrunning button-danger">Excluir</button>
+                <a class="button button-secondary" href="{% url back_url %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

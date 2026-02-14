@@ -21,6 +21,8 @@ class BlogAuthorsSerializer(ModelSerializer):
 class ListBlogPostSerializer(ModelSerializer):
     """Serializer for listing BlogPost instances."""
 
+    author = BlogAuthorsSerializer()
+
     class Meta:
         model = BlogPost
         fields = [
@@ -30,6 +32,7 @@ class ListBlogPostSerializer(ModelSerializer):
             "category",
             "excerpt",
             "slug",
+            "author",
         ]
 
 
@@ -37,6 +40,7 @@ class BlogPostSerializer(ModelSerializer):
     """Serializer for BlogPost model."""
 
     reading_time = SerializerMethodField()
+    author = BlogAuthorsSerializer()
 
     class Meta:
         model = BlogPost
@@ -48,6 +52,7 @@ class BlogPostSerializer(ModelSerializer):
             "content",
             "reading_time",
             "slug",
+            "author",
         ]
 
     def get_reading_time(self, obj):

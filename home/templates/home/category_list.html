@@ -1,0 +1,42 @@
+{% extends "wagtailadmin/base.html" %}
+
+{% block titletag %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="content">
+    {% include "wagtailadmin/shared/header.html" with title=title icon="list-ul" %}
+    <div class="nice-padding">
+        <div class="button-bar">
+            <a class="button button-longrunning" href="{% url 'category-create' %}">Nova categoria</a>
+        </div>
+
+        {% if categories %}
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Slug</th>
+                    <th>Artigos</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.slug }}</td>
+                    <td>{{ category.posts_count }}</td>
+                    <td>
+                        <a class="button button-secondary" href="{% url 'category-edit' category.id %}">Editar</a>
+                        <a class="button button-secondary" href="{% url 'category-delete' category.id %}">Excluir</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Sem categorias cadastradas.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

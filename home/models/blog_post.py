@@ -1,7 +1,9 @@
 from django.db import models
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
+
+from home.models.category import Category
 
 
 class BlogPost(Page):
@@ -14,11 +16,19 @@ class BlogPost(Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
-    category = models.CharField(max_length=255, blank=True)
+    category = models.ForeignKey(
+        Category,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="blog_posts",
+    )
     excerpt = models.TextField(blank=True)
     content = RichTextField(blank=True)
     content_panels = Page.content_panels + [
         FieldPanel("content", classname="full"),
+        FieldPanel("excerpt"),
+        FieldPanel("category"),
     ]
 
     @property

@@ -1,0 +1,24 @@
+{% extends "wagtailadmin/base.html" %}
+{% load static %}
+
+{% block titletag %}{{ title }}{% endblock %}
+
+
+{% block content %}
+<section class="content">
+    {% include "wagtailadmin/shared/header.html" with title=title icon="tag" %}
+    <div class="nice-padding">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="button-bar">
+                <button type="submit" class="button button-longrunning">{{ submit_label|default:"Salvar" }}</button>
+                <a class="button button-secondary" href="{% url back_url %}">Voltar para lista</a>
+                {% if category %}
+                <a class="button button-secondary" href="{% url 'category-delete' category.id %}">Excluir</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
