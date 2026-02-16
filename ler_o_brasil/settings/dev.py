@@ -1,4 +1,9 @@
+from dotenv import load_dotenv
+
 from .base import *
+
+# Load environment variables from .env file in development
+load_dotenv()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -26,7 +31,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8081",
     "http://127.0.0.1:8081",
 ]
-
 
 try:
     from .local import *
