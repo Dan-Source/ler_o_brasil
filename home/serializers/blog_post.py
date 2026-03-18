@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from home.models.blog_post import BlogPost
-from ler_o_brasil import settings
 from user.models import User
 
 
@@ -31,6 +30,7 @@ class ListBlogPostSerializer(ModelSerializer):
             "cover_image",
             "category",
             "excerpt",
+            "featured_post",
             "slug",
             "author",
         ]
@@ -51,6 +51,7 @@ class BlogPostSerializer(ModelSerializer):
             "category",
             "content",
             "reading_time",
+            "featured_post",
             "slug",
             "author",
         ]

@@ -25,10 +25,15 @@ class BlogPost(Page):
     )
     excerpt = models.TextField(blank=True)
     content = RichTextField(blank=True)
+    featured_post = models.BooleanField(
+        default=False, help_text="Mark as featured post"
+    )
+
     content_panels = Page.content_panels + [
         FieldPanel("content", classname="full"),
         FieldPanel("excerpt"),
         FieldPanel("category"),
+        FieldPanel("featured_post"),
     ]
 
     @property
