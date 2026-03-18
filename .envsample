@@ -12,8 +12,13 @@ DJANGO_CORS_ALLOWED_ORIGINS=https://example.com,https://admin.example.com
 DJANGO_CORS_ALLOW_CREDENTIALS=false
 DJANGO_CSRF_TRUSTED_ORIGINS=https://example.com,https://admin.example.com
 
-# Database (switch from SQLite in production)
-DATABASE_URL=postgres://user:password@host:5432/dbname
+# Database (can use DATABASE_URL or individual DATABASE_* variables)
+DATABASE_ENGINE=django.db.backends.postgresql
+DATABASE_NAME=dbname
+DATABASE_USER=user
+DATABASE_PASSWORD=change-me
+DATABASE_HOST=host
+DATABASE_PORT=5432
 
 # Email (production SMTP)
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend

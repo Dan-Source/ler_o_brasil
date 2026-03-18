@@ -14,8 +14,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
+
+# Load environment variables from .env file (once at the very top)
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -95,12 +100,12 @@ WSGI_APPLICATION = "ler_o_brasil.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database configuration with environment variables support
-DB_ENGINE = os.getenv("DB_ENGINE", "django.db.backends.postgresql")
-DB_NAME = os.getenv("DB_NAME", "ler_o_brasil")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+DB_ENGINE = os.getenv("DATABASE_ENGINE", "django.db.backends.postgresql")
+DB_NAME = os.getenv("DATABASE_NAME", "ler_o_brasil")
+DB_USER = os.getenv("DATABASE_USER", "postgres")
+DB_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
+DB_HOST = os.getenv("DATABASE_HOST", "localhost")
+DB_PORT = os.getenv("DATABASE_PORT", "5432")
 
 if DB_ENGINE == "django.db.backends.postgresql":
     DATABASES = {
@@ -202,7 +207,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-WAGTAILADMIN_BASE_URL = "http://example.com"
+WAGTAILADMIN_BASE_URL = os.getenv("WAGTAILADMIN_BASE_URL", "http://localhost:8000")
 
 # Allowed file extensions for documents in the document library.
 # This can be omitted to allow all files, but note that this may present a security risk

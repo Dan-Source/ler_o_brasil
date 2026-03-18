@@ -1,13 +1,6 @@
-# ⚠️ Arquivo Movido
+# Docker Compose Setup Guide
 
-Este arquivo foi movido para a pasta de documentação centralizada.
-
-**Consulte**: [docs/DOCKER_SETUP.md](docs/DOCKER_SETUP.md)
-
----
-
-Para um índice completo e guia de início rápido, veja: [docs/README.md](docs/README.md)
-
+## Quick Start with Docker Compose
 
 ### Prerequisites
 - Docker installed

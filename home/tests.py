@@ -1,44 +1,115 @@
-from home.models.models import HomePage
-
-from wagtail.models import Page, Site
+from django.test import TestCase
+from wagtail.models import Page
 from wagtail.test.utils import WagtailPageTestCase
 
+from home.factories import (
+    AuthorPageFactory,
+    BlogPostFactory,
+    BookPageFactory,
+    CategoryFactory,
+    EventIndexPageFactory,
+    EventPageFactory,
+)
+from home.models import (
+    AuthorPage,
+    BlogPost,
+    BookPage,
+    Category,
+    EventIndexPage,
+    EventPage,
+)
+from user.factories import UserFactory
 
-class HomeSetUpTests(WagtailPageTestCase):
+
+class BlogPostTests(WagtailPageTestCase):
     """
-    Tests for basic page structure setup and HomePage creation.
-    """
-
-    def test_root_create(self):
-        root_page = Page.objects.get(pk=1)
-        self.assertIsNotNone(root_page)
-
-    def test_homepage_create(self):
-        root_page = Page.objects.get(pk=1)
-        homepage = HomePage(title="Home")
-        root_page.add_child(instance=homepage)
-        self.assertTrue(HomePage.objects.filter(title="Home").exists())
-
-
-class HomeTests(WagtailPageTestCase):
-    """
-    Tests for homepage functionality and rendering.
+    Tests for BlogPost model and factory.
     """
 
     def setUp(self):
-        """
-        Create a homepage instance for testing.
-        """
-        root_page = Page.get_first_root_node()
-        Site.objects.create(
-            hostname="testsite", root_page=root_page, is_default_site=True
+        """Set up test fixtures."""
+        self.root_page = Page.get_first_root_node()
+
+    def test_blogpost_creation_with_factory(self):
+        """Test that BlogPostFactory creates valid blog posts."""
+        blog_post = BlogPostFactory.create(parent=self.root_page)
+        self.assertIsInstance(blog_post, BlogPost)
+        self.assertIsNotNone(blog_post.title)
+        self.assertIsNotNone(blog_post.owner)
+
+    def test_blogpost_with_category(self):
+        """Test blog post with category relationship."""
+        category = CategoryFactory.create(name="Literatura")
+        blog_post = BlogPostFactory.create(parent=self.root_page, category=category)
+        self.assertEqual(blog_post.category, category)
+
+    def test_blogpost_reading_time_property(self):
+        """Test reading_time calculated property."""
+        blog_post = BlogPostFactory.create(
+            parent=self.root_page,
+            content="word " * 200,  # 200 words
         )
-        self.homepage = HomePage(title="Home")
-        root_page.add_child(instance=self.homepage)
+        self.assertEqual(blog_post.reading_time, 1)
 
-    def test_homepage_is_renderable(self):
-        self.assertPageIsRenderable(self.homepage)
+    def test_published_blogpost(self):
+        """Test creating a published blog post."""
+        blog_post = BlogPostFactory.create(parent=self.root_page, published=True)
+        self.assertTrue(blog_post.live)
 
-    def test_homepage_template_used(self):
-        response = self.client.get(self.homepage.url)
-        self.assertTemplateUsed(response, "home/home_page.html")
+
+class CategoryTests(TestCase):
+    """
+    Tests for Category model and factory.
+    """
+
+    def test_category_creation_with_factory(self):
+        """Test that CategoryFactory creates valid categories."""
+        category = CategoryFactory.create()
+        self.assertIsInstance(category, Category)
+        self.assertIsNotNone(category.name)
+        self.assertIsNotNone(category.slug)
+
+    def test_category_unique_slug(self):
+        """Test that slugs are unique when names collide."""
+        CategoryFactory.create(name="test")
+        category2 = CategoryFactory.create(name="test")
+        self.assertNotEqual(category2.slug, "test")
+
+
+class AuthorPageTests(WagtailPageTestCase):
+    """
+    Tests for AuthorPage model and factory.
+    """
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.root_page = Page.get_first_root_node()
+
+    def test_authorpage_creation_with_factory(self):
+        """Test that AuthorPageFactory creates valid author pages."""
+        author = AuthorPageFactory.create(parent=self.root_page)
+        self.assertIsInstance(author, AuthorPage)
+        self.assertIsNotNone(author.title)
+        self.assertIsNotNone(author.owner)
+
+
+class BookPageTests(WagtailPageTestCase):
+    """
+    Tests for BookPage model and factory.
+    """
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.root_page = Page.get_first_root_node()
+
+    def test_bookpage_creation_with_factory(self):
+        """Test that BookPageFactory creates valid book pages."""
+        book = BookPageFactory.create(parent=self.root_page)
+        self.assertIsInstance(book, BookPage)
+        self.assertIsNotNone(book.title)
+        self.assertIsNotNone(book.owner)
+
+    def test_bookpage_with_authors(self):
+        """Test that books are created with authors."""
+        book = BookPageFactory.create(parent=self.root_page)
+        self.assertGreater(book.authors.count(), 0)

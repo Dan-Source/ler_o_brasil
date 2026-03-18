@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-book-page{% endblock %}
+
+{% block content %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    {% include "home/navbar.html" %}
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            {% if page.cover_image %}
+            <div class="book-cover">
+                {% image page.cover_image fill-300x450 class="img-fluid rounded shadow" %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9">
+            {% if page.title %}
+            <h1 class="mb-2">{{ page.title }}</h1>
+            {% endif %}
+
+            {% if page.subtitle %}
+            <h3 class="text-muted mb-4">{{ page.subtitle }}</h3>
+            {% endif %}
+
+            {% if page.authors.all %}
+            <div class="mb-3">
+                <strong>Autor(es):</strong>
+                {% for author in page.authors.all %}
+                <a href="{% pageurl author %}">{{ author.title }}</a>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mb-3 d-flex flex-wrap gap-3">
+                {% if page.publication_year %}
+                <span>
+                    <strong>Publicado:</strong> {{ page.publication_year }}
+                </span>
+                {% endif %}
+                {% if page.book_type %}
+                <span>
+                    <strong>Tipo:</strong> {{ page.book_type }}
+                </span>
+                {% endif %}
+                {% if page.first_published_at %}
+                <span class="text-muted">
+                    <strong>Adicionado:</strong> {{ page.first_published_at|date:"d/m/Y" }}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if page.description %}
+            <div class="book-description mb-5">
+                <h4>Descrição</h4>
+                {{ page.description|richtext }}
+            </div>
+            {% endif %}
+
+            {% if page.events.all %}
+            <div class="events-section">
+                <h4 class="mb-3">Eventos sobre este livro</h4>
+                <ul class="list-unstyled">
+                    {% for event in page.events.all %}
+                    <li class="mb-3 p-3 bg-light rounded">
+                        <strong><a href="{% pageurl event %}">{{ event.title }}</a></strong>
+                        <br>
+                        <small class="text-muted">
+                            {{ event.event_date|date:"d/m/Y" }}
+                            {% if event.event_time %}
+                            às {{ event.event_time|time:"H:i" }}
+                            {% endif %}
+                        </small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

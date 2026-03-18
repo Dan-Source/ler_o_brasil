@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-event-index-page{% endblock %}
+
+{% block content %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    {% include "home/navbar.html" %}
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% if page.title %}
+            <h1 class="mb-4 text-center">{{ page.title }}</h1>
+            {% endif %}
+
+            {% if page.description %}
+            <div class="event-index-description mb-5">
+                {{ page.description|richtext }}
+            </div>
+            {% endif %}
+
+            {% if page.get_events %}
+            <div class="events-calendar">
+                <div class="row">
+                    {% for event in page.get_events %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% pageurl event %}" class="text-decoration-none">{{ event.title }}</a>
+                                </h5>
+
+                                <div class="event-meta mb-3">
+                                    <span class="badge bg-primary">
+                                        {{ event.event_date|date:"d/m/Y" }}
+                                    </span>
+                                    {% if event.event_time %}
+                                    <span class="badge bg-secondary">
+                                        {{ event.event_time|time:"H:i" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                {% if event.description %}
+                                <p class="card-text text-muted small">
+                                    {{ event.description|truncatewords:20|richtext }}
+                                </p>
+                                {% endif %}
+
+                                {% if event.books.all %}
+                                <div class="event-books mb-3">
+                                    <small><strong>Livros:</strong></small>
+                                    <div>
+                                        {% for book in event.books.all %}
+                                        <small>
+                                            <a href="{% pageurl book %}">{{ book.title }}</a>{% if not forloop.last %},
+                                            {% endif %}
+                                        </small>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="event-actions">
+                                    {% if event.event_link %}
+                                    <a href="{{ event.event_link }}" class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="fas fa-video"></i> Acessar Evento
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% pageurl event %}" class="btn btn-sm btn-outline-secondary">
+                                        Detalhes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                Nenhum evento agendado no momento.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
