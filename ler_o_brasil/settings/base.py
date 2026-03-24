@@ -177,6 +177,16 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
+USE_S3_MEDIA_STORAGE = os.getenv("USE_S3_MEDIA_STORAGE", "false").lower() == "true"
+
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "")
+AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", "")
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
 # Default storage settings
 # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-STORAGES
 STORAGES = {
@@ -187,6 +197,26 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+if USE_S3_MEDIA_STORAGE:
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "region_name": AWS_S3_REGION_NAME,
+            "custom_domain": AWS_S3_CUSTOM_DOMAIN or None,
+            "default_acl": AWS_DEFAULT_ACL,
+            "querystring_auth": AWS_QUERYSTRING_AUTH,
+        },
+    }
+    if AWS_S3_CUSTOM_DOMAIN:
+        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+    else:
+        MEDIA_URL = (
+            f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
+        )
 
 # Django sets a maximum of 1000 fields per form by default, but particularly complex page models
 # can exceed this limit within Wagtail's page editor.

@@ -1,5 +1,5 @@
 from django.db import models
-from wagtail.admin.panels import FieldPanel, FieldRowPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 
@@ -30,6 +30,7 @@ class BlogPost(Page):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel("cover_image"),
         FieldPanel("content", classname="full"),
         FieldPanel("excerpt"),
         FieldPanel("category"),
@@ -53,3 +54,10 @@ class BlogPost(Page):
     def author(self):
         """Return the author of the blog post."""
         return self.owner
+
+    @property
+    def cover_image_url(self):
+        """Return the URL of the cover image if it exists, otherwise return None."""
+        if self.cover_image:
+            return self.cover_image.get_rendition("fill-300x450").url
+        return None

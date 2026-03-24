@@ -7,6 +7,15 @@ from wagtail.models import Page
 class AuthorPage(Page):
     """A page for an author profile."""
 
+    avatar = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="Author profile image",
+    )
+
     description = RichTextField(
         help_text="Biography and description of the author",
         blank=True,
@@ -16,6 +25,7 @@ class AuthorPage(Page):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel("avatar"),
         FieldPanel("birth_year"),
         FieldPanel("description", classname="full"),
     ]
