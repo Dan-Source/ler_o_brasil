@@ -58,7 +58,10 @@ class ListBlogPostSerializer(ModelSerializer):
 
     def get_author(self, obj):
         """Return the author of the blog post."""
-        return AuthorPage.objects.filter(id=obj.author.id).first()
+        author = AuthorPage.objects.filter(id=obj.author.id).first()
+        return (
+            AuthorPageSerializer(author, context=self.context).data if author else None
+        )
 
 
 class BlogPostSerializer(ModelSerializer):
