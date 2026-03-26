@@ -32,6 +32,7 @@ class ListBlogPostSerializer(ModelSerializer):
 
     author = SerializerMethodField()
     cover_image = SerializerMethodField()
+    category = SerializerMethodField()
 
     class Meta:
         model = BlogPost
@@ -62,6 +63,10 @@ class ListBlogPostSerializer(ModelSerializer):
         return (
             AuthorPageSerializer(author, context=self.context).data if author else None
         )
+
+    def get_category(self, obj):
+        """Return the category of the blog post."""
+        return obj.category.name if obj.category else None
 
 
 class BlogPostSerializer(ModelSerializer):

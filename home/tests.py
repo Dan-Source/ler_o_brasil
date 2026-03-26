@@ -115,6 +115,169 @@ class BlogPostApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_list_endpoint_filters_by_category_slug(self):
+        """Test list endpoint filters blog posts by category slug."""
+        matching_category = CategoryFactory.create(
+            name="Eligendi",
+            slug="eligendi",
+        )
+        other_category = CategoryFactory.create(name="Outro", slug="outro")
+
+        matching_post = BlogPostFactory.create(
+            parent=self.root_page,
+            category=matching_category,
+            published=True,
+        )
+        BlogPostFactory.create(
+            parent=self.root_page,
+            category=other_category,
+            published=True,
+        )
+
+        response = self.client.get(
+            reverse("blogpost-list"),
+            {"category": "eligendi"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["id"], matching_post.id)
+
+    def test_list_endpoint_respects_page_size_query_param(self):
+        """Test list endpoint uses page_size from query params."""
+        category = CategoryFactory.create(name="Eligendi", slug="eligendi")
+        BlogPostFactory.create_batch(
+            7,
+            parent=self.root_page,
+            category=category,
+            published=True,
+        )
+
+        response = self.client.get(
+            reverse("blogpost-list"),
+            {"page": 1, "page_size": 6, "category": "eligendi"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 7)
+        self.assertEqual(len(response.data["results"]), 6)
+
+    def test_search_endpoint_returns_matching_blog_posts(self):
+        """Test search endpoint returns only blog posts matching query."""
+        matching_post = BlogPostFactory.create(
+            parent=self.root_page,
+            title="Poetry from Recife",
+            published=True,
+        )
+        BlogPostFactory.create(
+            parent=self.root_page,
+            title="Cooking tips",
+            published=True,
+        )
+
+        response = self.client.get(
+            reverse("blogpost-search"),
+            {"query": "Poetry"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["id"], matching_post.id)
+
+    def test_search_endpoint_returns_empty_results_when_query_missing(self):
+        """Test search endpoint empty payload when query is missing."""
+        BlogPostFactory.create(
+            parent=self.root_page,
+            title="Poetry from Recife",
+            published=True,
+        )
+
+        response = self.client.get(reverse("blogpost-search"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        self.assertIsNone(response.data["next"])
+        self.assertIsNone(response.data["previous"])
+        self.assertEqual(response.data["results"], [])
+
+
+class GenericPageSearchApiTests(APITestCase):
+    """Tests for generic page search API endpoint."""
+
+    def setUp(self):
+        self.root_page = Page.get_first_root_node()
+
+    def test_generic_search_returns_blog_author_and_book(self):
+        blog_post = BlogPostFactory.create(
+            parent=self.root_page,
+            title="Recife Literário",
+            search_description="Resumo de blog em Recife.",
+            published=True,
+        )
+        author = AuthorPageFactory.create(
+            parent=self.root_page,
+            title="Autor Recife",
+            search_description="Bio curta do autor.",
+        )
+        author.save_revision().publish()
+
+        book = BookPageFactory.create(
+            parent=self.root_page,
+            title="Livro Recife",
+            search_description="Resumo do livro.",
+        )
+        book.save_revision().publish()
+
+        response = self.client.get(
+            reverse("generic-page-search"),
+            {"query": "Recife"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 3)
+        self.assertEqual(len(response.data["results"]), 3)
+        self.assertIn(
+            {
+                "title": blog_post.title,
+                "search_description": blog_post.search_description,
+                "slug": blog_post.slug,
+            },
+            response.data["results"],
+        )
+        self.assertIn(
+            {
+                "title": author.title,
+                "search_description": author.search_description,
+                "slug": None,
+            },
+            response.data["results"],
+        )
+        self.assertIn(
+            {
+                "title": book.title,
+                "search_description": book.search_description,
+                "slug": None,
+            },
+            response.data["results"],
+        )
+
+    def test_generic_search_returns_empty_results_when_query_missing(self):
+        BlogPostFactory.create(
+            parent=self.root_page,
+            title="Recife Literário",
+            published=True,
+        )
+
+        response = self.client.get(reverse("generic-page-search"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        self.assertIsNone(response.data["next"])
+        self.assertIsNone(response.data["previous"])
+        self.assertEqual(response.data["results"], [])
+
 
 class CategoryTests(TestCase):
     """

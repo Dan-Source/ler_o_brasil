@@ -100,4 +100,8 @@ class CategoryViewSet(ReadOnlyModelViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Category.objects.all()
+        return (
+            Category.objects.filter(blog_posts__live=True)
+            .distinct()
+            .order_by("name")
+        )

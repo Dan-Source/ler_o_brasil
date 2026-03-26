@@ -1,5 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -10,12 +11,20 @@ from home.serializers.blog_post import (
 )
 
 
+class BlogPostPagination(PageNumberPagination):
+    """Enable dynamic page size via query params."""
+
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class BlogPostViewSet(ReadOnlyModelViewSet):
     """ViewSet for viewing blog posts."""
 
     serializer_class = ListBlogPostSerializer
     detail_serializer_class = BlogPostSerializer
     lookup_field = "slug"
+    pagination_class = BlogPostPagination
 
     def get_serializer_class(self):
         """Use detail serializer for detail-oriented endpoints."""
@@ -24,7 +33,11 @@ class BlogPostViewSet(ReadOnlyModelViewSet):
         return self.serializer_class
 
     def get_queryset(self):
-        return BlogPost.objects.live().public()
+        queryset = BlogPost.objects.live().public().select_related("category")
+        if category_slug := self.request.query_params.get("category"):
+            queryset = queryset.filter(category__slug=category_slug)
+
+        return queryset
 
     @action(detail=False, methods=["get"], url_path="featured")
     def featured(self, request):
