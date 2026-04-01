@@ -75,6 +75,7 @@ class BlogPostSerializer(ModelSerializer):
     reading_time = SerializerMethodField()
     author = SerializerMethodField()
     cover_image = SerializerMethodField()
+    category = SerializerMethodField()
 
     class Meta:
         model = BlogPost
@@ -101,6 +102,10 @@ class BlogPostSerializer(ModelSerializer):
         return (
             request.build_absolute_uri(url) if request and url.startswith("/") else url
         )
+
+    def get_category(self, obj):
+        """Return the category of the blog post."""
+        return obj.category.name if obj.category else None
 
     def get_author(self, obj):
         author = AuthorPage.objects.filter(id=obj.author.id).first()

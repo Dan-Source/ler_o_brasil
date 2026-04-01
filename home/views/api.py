@@ -9,8 +9,9 @@ from home.serializers.event import EventPageDetailSerializer, EventPageListSeria
 class AuthorPageViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for AuthorPage model with read-only access."""
 
-    queryset = AuthorPage.objects.live()
+    queryset = AuthorPage.objects.live().public().order_by("title")
     serializer_class = AuthorPageSerializer
+    lookup_field = "slug"
 
 
 class BookPageViewSet(viewsets.ReadOnlyModelViewSet):

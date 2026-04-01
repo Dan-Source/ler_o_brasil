@@ -17,6 +17,7 @@ from home.models import (
     BookPage,
     Category,
 )
+from user.factories import UserFactory
 
 
 class BlogPostTests(WagtailPageTestCase):
@@ -143,6 +144,65 @@ class BlogPostApiTests(APITestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(response.data["results"][0]["id"], matching_post.id)
+
+    def test_list_endpoint_filters_by_author_id(self):
+        """Test list endpoint filters blog posts by author id."""
+        matching_author = UserFactory.create()
+        other_author = UserFactory.create()
+
+        matching_post = BlogPostFactory.create(
+            parent=self.root_page,
+            owner=matching_author,
+            published=True,
+        )
+        BlogPostFactory.create(
+            parent=self.root_page,
+            owner=other_author,
+            published=True,
+        )
+
+        response = self.client.get(
+            reverse("blogpost-list"),
+            {"author": matching_author.id},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["id"], matching_post.id)
+
+    def test_list_endpoint_filters_by_multiple_author_ids(self):
+        """Test list endpoint supports comma-separated author IDs."""
+        author_1 = UserFactory.create()
+        author_2 = UserFactory.create()
+        author_3 = UserFactory.create()
+
+        post_1 = BlogPostFactory.create(
+            parent=self.root_page,
+            owner=author_1,
+            published=True,
+        )
+        post_2 = BlogPostFactory.create(
+            parent=self.root_page,
+            owner=author_2,
+            published=True,
+        )
+        BlogPostFactory.create(
+            parent=self.root_page,
+            owner=author_3,
+            published=True,
+        )
+
+        response = self.client.get(
+            reverse("blogpost-list"),
+            {"author": f"{author_1.id},{author_2.id},invalid"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(len(response.data["results"]), 2)
+        result_ids = {item["id"] for item in response.data["results"]}
+        self.assertEqual(result_ids, {post_1.id, post_2.id})
 
     def test_list_endpoint_respects_page_size_query_param(self):
         """Test list endpoint uses page_size from query params."""
@@ -313,6 +373,38 @@ class AuthorPageTests(WagtailPageTestCase):
         self.assertIsInstance(author, AuthorPage)
         self.assertIsNotNone(author.title)
         self.assertIsNotNone(author.owner)
+
+
+class AuthorPageApiTests(APITestCase):
+    """Tests for Author API list and detail endpoints."""
+
+    def setUp(self):
+        self.root_page = Page.get_first_root_node()
+
+    def test_authors_list_endpoint_returns_published_authors(self):
+        author_1 = AuthorPageFactory.create(parent=self.root_page)
+        author_1.save_revision().publish()
+
+        author_2 = AuthorPageFactory.create(parent=self.root_page)
+        author_2.save_revision().publish()
+
+        response = self.client.get(reverse("author-list"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(len(response.data["results"]), 2)
+
+    def test_authors_detail_endpoint_returns_author_by_slug(self):
+        author = AuthorPageFactory.create(parent=self.root_page)
+        author.save_revision().publish()
+
+        response = self.client.get(
+            reverse("author-detail", kwargs={"slug": author.slug})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], author.id)
+        self.assertEqual(response.data["title"], author.title)
 
 
 class BookPageTests(WagtailPageTestCase):

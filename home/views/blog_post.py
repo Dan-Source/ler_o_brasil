@@ -37,6 +37,21 @@ class BlogPostViewSet(ReadOnlyModelViewSet):
         if category_slug := self.request.query_params.get("category"):
             queryset = queryset.filter(category__slug=category_slug)
 
+        # Support comma-separated author IDs from the `author` query param.
+        author_filters = self.request.query_params.getlist("author")
+
+        author_ids = []
+        for author_filter in author_filters:
+            if not author_filter:
+                continue
+            for author_id in author_filter.split(","):
+                cleaned_author_id = author_id.strip()
+                if cleaned_author_id.isdigit():
+                    author_ids.append(int(cleaned_author_id))
+
+        if author_ids:
+            queryset = queryset.filter(owner_id__in=author_ids)
+
         return queryset
 
     @action(detail=False, methods=["get"], url_path="featured")
