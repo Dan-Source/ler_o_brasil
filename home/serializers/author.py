@@ -18,6 +18,7 @@ class AuthorPageSerializer(serializers.ModelSerializer):
             "birth_year",
             "avatar",
             "url",
+            "slug",
         ]
 
     def get_avatar(self, obj):

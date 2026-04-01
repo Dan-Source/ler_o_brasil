@@ -28,6 +28,7 @@ class AuthorPage(Page):
         FieldPanel("avatar"),
         FieldPanel("birth_year"),
         FieldPanel("description", classname="full"),
+        FieldPanel("slug"),
     ]
 
     def __str__(self):

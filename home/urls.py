@@ -1,7 +1,13 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from home.views.api import AuthorPageViewSet, BookPageViewSet, EventPageViewSet
+from home.views.api import (
+    AuthorPageViewSet,
+    BookPageViewSet,
+    ContactMessageAPIView,
+    CsrfTokenAPIView,
+    EventPageViewSet,
+)
 from home.views.blog_post import BlogPostViewSet
 from home.views.category import CategoryViewSet
 from home.views.search import GenericPageSearchAPIView
@@ -14,6 +20,16 @@ router.register(r"books", BookPageViewSet, basename="book")
 router.register(r"events", EventPageViewSet, basename="event")
 
 home_urls = [
+    path(
+        "api/v1/csrf/",
+        CsrfTokenAPIView.as_view(),
+        name="csrf-token",
+    ),
+    path(
+        "api/v1/contact/",
+        ContactMessageAPIView.as_view(),
+        name="contact-message",
+    ),
     path(
         "api/v1/pages/search/",
         GenericPageSearchAPIView.as_view(),

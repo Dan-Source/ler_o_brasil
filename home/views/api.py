@@ -1,8 +1,13 @@
-from rest_framework import viewsets
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework import status, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from home.models import AuthorPage, BookPage, EventPage
 from home.serializers.author import AuthorPageSerializer
 from home.serializers.book import BookPageDetailSerializer, BookPageListSerializer
+from home.serializers.contact import ContactMessageInputSerializer
 from home.serializers.event import EventPageDetailSerializer, EventPageListSerializer
 
 
@@ -36,3 +41,28 @@ class EventPageViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == "retrieve":
             return EventPageDetailSerializer
         return EventPageListSerializer
+
+
+class ContactMessageAPIView(APIView):
+    """Receive contact messages via POST."""
+
+    def post(self, request):
+        serializer = ContactMessageInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"detail": "Invalid contact message payload."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"message": "Contact message received successfully."},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class CsrfTokenAPIView(APIView):
+    """Set a CSRF cookie for SPA clients before unsafe requests."""
+
+    def get(self, request):
+        return Response({"detail": "CSRF cookie set."}, status=status.HTTP_200_OK)

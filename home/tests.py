@@ -339,6 +339,53 @@ class GenericPageSearchApiTests(APITestCase):
         self.assertEqual(response.data["results"], [])
 
 
+class ContactMessageApiTests(APITestCase):
+    """Tests for contact message API endpoint."""
+
+    def test_contact_message_post_success(self):
+        payload = {
+            "name": "Ana Silva",
+            "email": "ana@example.com",
+            "subject": "Duvida sobre livros",
+            "message": "Gostaria de saber sobre os proximos lancamentos.",
+        }
+
+        response = self.client.post(reverse("contact-message"), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            response.data,
+            {"message": "Contact message received successfully."},
+        )
+
+    def test_contact_message_post_invalid_payload(self):
+        payload = {
+            "name": "Ana Silva",
+            "email": "not-an-email",
+            "subject": "Duvida",
+            "message": "Mensagem",
+        }
+
+        response = self.client.post(reverse("contact-message"), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data,
+            {"detail": "Invalid contact message payload."},
+        )
+
+
+class CsrfTokenApiTests(APITestCase):
+    """Tests for CSRF bootstrap endpoint."""
+
+    def test_csrf_endpoint_sets_cookie(self):
+        response = self.client.get(reverse("csrf-token"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {"detail": "CSRF cookie set."})
+        self.assertIn("csrftoken", response.cookies)
+
+
 class CategoryTests(TestCase):
     """
     Tests for Category model and factory.
