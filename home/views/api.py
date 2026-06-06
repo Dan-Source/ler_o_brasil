@@ -15,15 +15,21 @@ from home.serializers.event import EventPageDetailSerializer, EventPageListSeria
 class AuthorPageViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for AuthorPage model with read-only access."""
 
-    queryset = AuthorPage.objects.live().public().order_by("title")
+    queryset = AuthorPage.objects.none()
     serializer_class = AuthorPageSerializer
     lookup_field = "slug"
+
+    def get_queryset(self):
+        return AuthorPage.objects.live().public().order_by("title")
 
 
 class BookPageViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for BookPage model with read-only access."""
 
-    queryset = BookPage.objects.live()
+    queryset = BookPage.objects.none()
+
+    def get_queryset(self):
+        return BookPage.objects.live()
 
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""
@@ -35,7 +41,10 @@ class BookPageViewSet(viewsets.ReadOnlyModelViewSet):
 class EventPageViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for EventPage model with read-only access."""
 
-    queryset = EventPage.objects.live().order_by("event_date", "event_time")
+    queryset = EventPage.objects.none()
+
+    def get_queryset(self):
+        return EventPage.objects.live().order_by("event_date", "event_time")
 
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""

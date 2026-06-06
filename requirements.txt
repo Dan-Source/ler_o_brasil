@@ -8,3 +8,4 @@ wagtail-factories>=4.1.0
 Faker>=22.0.0
 django-storages>=1.14.4
 boto3>=1.35.0
+python-dotenv==1.2.2
