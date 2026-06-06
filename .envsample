@@ -2,10 +2,10 @@
 DJANGO_SETTINGS_MODULE=ler_o_brasil.settings.production
 DJANGO_SECRET_KEY=change-me
 DJANGO_DEBUG=false
-DJANGO_ALLOWED_HOSTS=example.com,api.example.com
+DJANGO_ALLOWED_HOSTS=lerobrasil.taloburiti.com.br
 
 # Wagtail
-WAGTAILADMIN_BASE_URL=https://example.com
+WAGTAILADMIN_BASE_URL=https://lerobrasil.taloburiti.com.br
 
 # CORS/CSRF
 DJANGO_CORS_ALLOWED_ORIGINS=https://example.com,https://admin.example.com

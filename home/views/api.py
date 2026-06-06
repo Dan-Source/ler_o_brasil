@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from home.models import AuthorPage, BookPage, EventPage
+from home.models.contact_message import ContactMessage
 from home.serializers.author import AuthorPageSerializer
 from home.serializers.book import BookPageDetailSerializer, BookPageListSerializer
 from home.serializers.contact import ContactMessageInputSerializer
@@ -53,6 +54,8 @@ class ContactMessageAPIView(APIView):
                 {"detail": "Invalid contact message payload."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        ContactMessage.objects.create(**serializer.validated_data)
 
         return Response(
             {"message": "Contact message received successfully."},

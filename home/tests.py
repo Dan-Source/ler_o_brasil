@@ -16,6 +16,7 @@ from home.models import (
     BlogPost,
     BookPage,
     Category,
+    ContactMessage,
 )
 from user.factories import UserFactory
 
@@ -357,6 +358,12 @@ class ContactMessageApiTests(APITestCase):
             response.data,
             {"message": "Contact message received successfully."},
         )
+        self.assertEqual(ContactMessage.objects.count(), 1)
+        saved_message = ContactMessage.objects.first()
+        self.assertEqual(saved_message.name, payload["name"])
+        self.assertEqual(saved_message.email, payload["email"])
+        self.assertEqual(saved_message.subject, payload["subject"])
+        self.assertEqual(saved_message.message, payload["message"])
 
     def test_contact_message_post_invalid_payload(self):
         payload = {

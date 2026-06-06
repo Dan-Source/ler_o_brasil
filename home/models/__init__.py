@@ -2,6 +2,7 @@ from home.models.author import AuthorPage
 from home.models.blog_post import BlogPost
 from home.models.book import BookPage
 from home.models.category import Category
+from home.models.contact_message import ContactMessage
 from home.models.event import EventIndexPage, EventPage
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "EventIndexPage",
     "EventPage",
     "Category",
+    "ContactMessage",
 ]

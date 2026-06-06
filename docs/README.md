@@ -139,6 +139,10 @@ ler_o_brasil/
 
 Veja [ENV_SETUP.md#security-notes](ENV_SETUP.md#security-notes) para mais informações.
 
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
 ## 📖 Referências Externas
 
 - [python-dotenv Documentation](https://github.com/theskumar/python-dotenv)

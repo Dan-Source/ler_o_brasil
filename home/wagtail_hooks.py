@@ -1,9 +1,10 @@
 from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.viewsets.model import ModelViewSet
 from wagtail.admin.viewsets.pages import PageListingViewSet
 
-from home.models import AuthorPage
+from home.models import AuthorPage, ContactMessage
 
 from .views.category import (
     category_create,
@@ -22,6 +23,21 @@ class AuthorPageListingViewSet(PageListingViewSet):
 
 
 author_page_listing_viewset = AuthorPageListingViewSet("author_pages")
+
+
+class ContactMessageViewSet(ModelViewSet):
+    model = ContactMessage
+    icon = "mail"
+    menu_label = "Mensagens de Contato"
+    add_to_admin_menu = True
+    ordering = ("-created_at",)
+    list_display = ("name", "email", "subject", "created_at")
+    form_fields = ("name", "email", "subject", "message")
+    inspect_view_enabled = True
+    add_to_reference_index = False
+
+
+contact_message_viewset = ContactMessageViewSet("contact_messages")
 
 
 @hooks.register("register_admin_urls")
@@ -45,6 +61,11 @@ def register_category_url():
 @hooks.register("register_admin_viewset")
 def register_author_page_viewset():
     return author_page_listing_viewset
+
+
+@hooks.register("register_admin_viewset")
+def register_contact_message_viewset():
+    return contact_message_viewset
 
 
 @hooks.register("register_admin_menu_item")
