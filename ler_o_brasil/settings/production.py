@@ -11,6 +11,12 @@ if not SECRET_KEY:
 
 # Get ALLOWED_HOSTS from environment
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == [""]:
     raise ValueError("DJANGO_ALLOWED_HOSTS environment variable is not set")
 
@@ -66,6 +72,7 @@ CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "true").lower() in (
 STORAGES["staticfiles"]["BACKEND"] = (
     "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 )
+
 
 try:
     from .local import *
