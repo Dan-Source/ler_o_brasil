@@ -1,3 +1,4 @@
+ENVIORNMENT=dev
 # Django core
 DJANGO_SETTINGS_MODULE=ler_o_brasil.settings.production
 DJANGO_SECRET_KEY=change-me
