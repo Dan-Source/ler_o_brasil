@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
 from dotenv import load_dotenv
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -100,33 +101,20 @@ WSGI_APPLICATION = "ler_o_brasil.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database configuration with environment variables support
-DB_ENGINE = os.getenv("DATABASE_ENGINE", "django.db.backends.postgresql")
-DB_NAME = os.getenv("DATABASE_NAME", "ler_o_brasil")
-DB_USER = os.getenv("DATABASE_USER", "postgres")
-DB_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
-DB_HOST = os.getenv("DATABASE_HOST", "localhost")
-DB_PORT = os.getenv("DATABASE_PORT", "5432")
+# Database configuration using dj-database-url
 
-if DB_ENGINE == "django.db.backends.postgresql":
-    DATABASES = {
-        "default": {
-            "ENGINE": DB_ENGINE,
-            "NAME": DB_NAME,
-            "USER": DB_USER,
-            "PASSWORD": DB_PASSWORD,
-            "HOST": DB_HOST,
-            "PORT": DB_PORT,
-        }
-    }
-else:
-    # Fallback to SQLite for local development without .env
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgres://postgres:postgres@localhost:5432/ler_o_brasil"
+)
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+    )
+}
 
 
 # Password validation
