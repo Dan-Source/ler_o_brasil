@@ -2,7 +2,7 @@ import os
 
 from .base import *
 
-DEBUG = False
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() in ("true", "1", "t")
 
 # Get SECRET_KEY from environment
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
@@ -73,17 +73,28 @@ STORAGES["staticfiles"]["BACKEND"] = (
     "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 )
 
+# Determine logging level based on environment variable
+# Django log level options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "WARNING").upper()
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "root": {
         "handlers": ["console"],
-        "level": "WARNING",
+        "level": LOG_LEVEL,
     },
 }
 
