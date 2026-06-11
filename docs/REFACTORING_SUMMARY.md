@@ -1,9 +1,13 @@
-# Refactoring Summary: Unified Environment Variable Configuration
+# ⚠️ Arquivo Movido
 
-## Objective
-Refactor the codebase to load all environment variables from a single `.env` file for both Docker and local environments.
+Este arquivo foi movido para a pasta de documentação centralizada.
 
-## Changes Made
+**Consulte**: [docs/REFACTORING_SUMMARY.md](docs/REFACTORING_SUMMARY.md)
+
+---
+
+Para um índice completo e guia de início rápido, veja: [docs/README.md](docs/README.md)
+
 
 ### 1. **ler_o_brasil/settings/base.py**
 **Status**: ✅ Updated
