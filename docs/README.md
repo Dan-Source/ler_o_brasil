@@ -97,6 +97,10 @@ Consulte [ENV_SETUP.md](ENV_SETUP.md#production-deployment) para mais detalhes.
 | `DATABASE_HOST` | Host do banco de dados | `db` (docker) ou `localhost` | seu-host-produção |
 | `DJANGO_SECRET_KEY` | Chave secreta Django | dev-key | DEVE SER GERADA |
 | `SECURE_SSL_REDIRECT` | Redirecionar para HTTPS | `false` | `true` |
+| `DJANGO_DEFAULT_ADMIN_USERNAME` | Username do admin padrão | `admin` | configurado no deploy |
+| `DJANGO_DEFAULT_ADMIN_EMAIL` | Email do admin padrão | `admin@example.com` | configurado no deploy |
+| `DJANGO_DEFAULT_ADMIN_PASSWORD` | Senha do admin padrão | `testpass123` | configurado no deploy |
+| `DJANGO_DEFAULT_ADMIN_COUNTRY` | País do admin padrão | `Brasil` | configurado no deploy |
 
 Veja [ENV_SETUP.md#environment-variables-overview](ENV_SETUP.md#environment-variables-overview) para referência completa.
 

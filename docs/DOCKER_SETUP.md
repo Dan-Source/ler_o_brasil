@@ -32,17 +32,13 @@ Para um índice completo e guia de início rápido, veja: [docs/README.md](docs/
    docker-compose up -d
    ```
 
-3. **Run migrations** (if not already done in the web container):
+3. **Run migrations and create the default admin** (handled automatically in container startup):
    ```bash
    docker-compose exec web python manage.py migrate
+   docker-compose exec web python manage.py create_default_admin
    ```
 
-4. **Create a superuser** (optional):
-   ```bash
-   docker-compose exec web python manage.py createsuperuser
-   ```
-
-5. **Access the application**:
+4. **Access the application**:
    - Django app: http://localhost:8000
    - Wagtail admin: http://localhost:8000/admin
 
@@ -87,6 +83,14 @@ The PostgreSQL database is stored in a Docker volume named `postgres_data`. This
 ### Environment Variables
 
 The `docker-compose.yml` loads variables from your `.env` file using the `env_file: .env` directive. This ensures both Docker and local development use the same configuration.
+
+**Default admin bootstrap variables**:
+- `DJANGO_DEFAULT_ADMIN_USERNAME` - default admin username
+- `DJANGO_DEFAULT_ADMIN_EMAIL` - default admin email address
+- `DJANGO_DEFAULT_ADMIN_PASSWORD` - default admin password
+- `DJANGO_DEFAULT_ADMIN_COUNTRY` - country value required by the custom user model
+
+If these are omitted in development, the startup command falls back to safe local defaults. In production, set them explicitly so the created admin is fully configured.
 
 **Key difference for Docker:**
 - Use `DATABASE_HOST=db` (the Docker service name)
