@@ -46,8 +46,13 @@ COPY --chown=wagtail:wagtail . .
 # Use user "wagtail" to run the build commands below and the server itself.
 USER wagtail
 
-# Collect static files.
-RUN python manage.py collectstatic --noinput --clear
+# Collect static files with the production settings module so WhiteNoise
+# generates the manifest expected at runtime.
+RUN DJANGO_SETTINGS_MODULE=ler_o_brasil.settings.production \
+    DJANGO_DEBUG=false \
+    DJANGO_SECRET_KEY=dummy \
+    DJANGO_ALLOWED_HOSTS=localhost \
+    python manage.py collectstatic --noinput --clear
 
 # Runtime command that executes when "docker run" is called, it does the
 # following:
