@@ -30,6 +30,7 @@ htmlcov/
 .vscode/
 .idea/
 .DS_Store
+.history
 
 # Environment files
 .env

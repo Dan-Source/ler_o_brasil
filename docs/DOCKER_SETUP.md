@@ -61,6 +61,11 @@ docker-compose down
 docker-compose down -v
 ```
 
+#### Recreate the web container so the new env takes effect:
+```bash
+docker compose -f docker-compose.dev.yml up -d --force-recreate web
+```
+
 #### Access database directly:
 ```bash
 docker-compose exec db psql -U postgres -d ler_o_brasil

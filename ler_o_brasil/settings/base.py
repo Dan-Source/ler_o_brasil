@@ -106,7 +106,7 @@ WSGI_APPLICATION = "ler_o_brasil.wsgi.application"
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgres://postgres:postgres@localhost:5432/ler_o_brasil"
+    "postgres://ler_o_brasil:ler_o_brasil@db:5432/ler_o_brasil"
 )
 
 DATABASES = {
